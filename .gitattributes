@@ -1,2 +1,46 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+const key = "AIzaSyDlljRilkVAT2zI9cvqQyftQhFxaeylh6I";
+function answerHistory() {
+  try {
+    const inputRef = document.querySelector("#query");
+    const responseBox = document.querySelector("#responseBox");
+    if (!inputRef) {
+      alert("Invalid input field.");
+      return;
+    }
+    const query = inputRef.value;
+    if (query == "") {
+      alert("Please enter a question.");
+      return;
+    }
+    const body = {
+      contents: [
+        {
+          parts: [{ text: query }],
+        },
+      ],
+    };
+    fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDlljRilkVAT2zI9cvqQyftQhFxaeylh6I`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const reply = data.candidates[0].content.parts[0].text;
+        responseBox.innerHTML += `You: ${query} , Bot: ${reply}`;
+        inputRef.value = "";
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+        alert("Something went wrong. Please try again.");
+      });
+  } catch (err) {
+    console.error("Unexpected Error:", err);
+  }
+}
+
